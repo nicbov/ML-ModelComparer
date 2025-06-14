@@ -1,0 +1,14 @@
+# Ignore Python virtual environments
+venv/
+
+# macOS system files
+.DS_Store
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
