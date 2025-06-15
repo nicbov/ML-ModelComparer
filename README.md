@@ -21,8 +21,10 @@ bash:
 "cd ML-ModelComparer"
 
 Create a Virtual Environment:
-"python3 -m venv venv"        
-"source venv/bin/activate" # macOS/Linux
+"python3 -m venv venv"   
+
+# macOS/Linux
+"source venv/bin/activate" 
 
 # or on Windows
 "venv\Scripts\activate"
