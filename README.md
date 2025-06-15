@@ -32,10 +32,6 @@ pip install -r requirements.txt
 You will run into a bug on MacOS with XGBoost, the fix will be downloading this(you need homebrew or lookup a different way to install libomp)
 brew install libomp
 
-Data:
-due to privacy I can't just post the CSV, but the kaggle link is below. Download it and place the heart.csv file at Models/heart.csv
-https://www.kaggle.com/datasets/fedesoriano/heart-failure-prediction?resource=download
-
 Once all of that is finished, to run the app, just run:
 python app.py
 
