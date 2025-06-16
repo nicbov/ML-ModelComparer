@@ -17,3 +17,5 @@ six==1.17.0
 threadpoolctl==3.6.0
 tzdata==2025.2
 xgboost==3.0.2
+fastapi==0.115.12
+uvicorn==0.34.3
