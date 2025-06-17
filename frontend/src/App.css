@@ -1,38 +1,142 @@
-.App {
-  text-align: center;
-}
+import React, { useState } from "react";
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+type ModelReport = {
+  precision: number;
+  recall: number;
+  "f1-score": number;
+  support: number;
+};
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
+type ModelResults = {
+  accuracy: number;
+  report: Record<string, ModelReport | number>;
+};
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
+const App: React.FC = () => {
+  const [results, setResults] = useState<Record<string, ModelResults> | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-.App-link {
-  color: #61dafb;
-}
+  const fetchModelResults = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/models");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data: Record<string, ModelResults> = await response.json();
+      setResults(data);
+    } catch (err: any) {
+      setError(err.message || "Unknown error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+  return (
+    <div style={{ fontFamily: "Inter, sans-serif", backgroundColor: "#f9f9f9", minHeight: "100vh", padding: "2rem" }}>
+      <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+        <h1 style={{ textAlign: "center", color: "#333", fontSize: "2.4rem", marginBottom: "1.5rem" }}>
+          🧠 ML Model Comparison
+        </h1>
+
+        <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+          <button
+            onClick={fetchModelResults}
+            disabled={loading}
+            style={{
+              backgroundColor: "#0066ff",
+              color: "white",
+              border: "none",
+              padding: "0.8rem 1.5rem",
+              fontSize: "1rem",
+              borderRadius: "8px",
+              cursor: loading ? "not-allowed" : "pointer",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+              transition: "background-color 0.3s",
+            }}
+          >
+            {loading ? "Calculating..." : "Run Comparison"}
+          </button>
+        </div>
+
+        {error && (
+          <div style={{ color: "red", textAlign: "center", marginBottom: "1rem" }}>
+            ⚠️ Error: {error}
+          </div>
+        )}
+
+        {!results && !loading && (
+          <div style={{ textAlign: "center", color: "#666", fontStyle: "italic" }}>
+            Click "Run Comparison" to fetch model performance results.
+          </div>
+        )}
+
+        {results && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+            {Object.entries(results).map(([modelName, result]) => (
+              <div
+                key={modelName}
+                style={{
+                  backgroundColor: "#fff",
+                  borderRadius: "10px",
+                  padding: "1.5rem",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                }}
+              >
+                <h2 style={{ marginBottom: "0.5rem", color: "#333" }}>{modelName}</h2>
+                <p style={{ fontWeight: "bold", marginBottom: "1rem" }}>
+                  Accuracy: {(result.accuracy * 100).toFixed(2)}%
+                </p>
+
+                <h3 style={{ marginTop: "1rem", marginBottom: "0.5rem", fontSize: "1.1rem", color: "#555" }}>
+                  Classification Report:
+                </h3>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.9rem" }}>
+                  <thead>
+                    <tr style={{ backgroundColor: "#f0f0f0" }}>
+                      <th style={thStyle}>Class</th>
+                      <th style={thStyle}>Precision</th>
+                      <th style={thStyle}>Recall</th>
+                      <th style={thStyle}>F1-Score</th>
+                      <th style={thStyle}>Support</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(result.report).map(([key, value]) => {
+                      if (typeof value === "number") return null;
+                      const v = value as ModelReport;
+                      return (
+                        <tr key={key}>
+                          <td style={tdStyle}>{key}</td>
+                          <td style={tdStyle}>{v.precision.toFixed(3)}</td>
+                          <td style={tdStyle}>{v.recall.toFixed(3)}</td>
+                          <td style={tdStyle}>{v["f1-score"].toFixed(3)}</td>
+                          <td style={tdStyle}>{v.support}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const thStyle: React.CSSProperties = {
+  border: "1px solid #ddd",
+  padding: "0.5rem",
+  textAlign: "left",
+};
+
+const tdStyle: React.CSSProperties = {
+  border: "1px solid #eee",
+  padding: "0.5rem",
+};
+
+export default App;
