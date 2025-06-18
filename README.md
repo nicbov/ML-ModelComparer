@@ -23,10 +23,10 @@ bash:
 Create a Virtual Environment:
 "python3 -m venv venv"   
 
-# macOS/Linux
+macOS/Linux
 "source venv/bin/activate" 
 
-# or on Windows
+or on Windows
 "venv\Scripts\activate"
 
 Install requirements:
@@ -36,7 +36,9 @@ You will run into a bug on MacOS with XGBoost, the fix will be downloading this(
 "brew install libomp"
 
 Once all of that is finished, to run the app, just run:
-"python app.py"
+"uvicorn main:app --reload" in root project directory(you should have uvicorn from requirements.txt, but if not you will need to install.
+
+In a seperate terminal, cd to frontend/, all you have to do is run "npm start"(if you dont have npm in this specific folder, install it). 
 
 
 MIT license
