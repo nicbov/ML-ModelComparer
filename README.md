@@ -33,10 +33,25 @@ Install requirements:
 "pip install -r requirements.txt"
 
 You will run into a bug on MacOS with XGBoost, the fix will be downloading this(you need homebrew or lookup a different way to install libomp)
+
 "brew install libomp"
 
-Once all of that is finished, to run the app, just run:
-"python app.py"
+cd to /ML_ModelComparer/frontend and npm install, double check there is the package.json and package-lock.json so it will download the packages. 
+
+Once all of that is finished, to run the app, go to root ML-Model Comparison directory and run:
+
+uvicorn main:app --reload
+
+If that is giving an error make sure you have uvicorn downloaded correctly from requirements.txt
+
+Once you run that and leave it running, open a seperate terminal window, cd to /ML_ModelComparer/frontend and run:
+
+npm start
+
+
+
+
+
 
 
 MIT license
